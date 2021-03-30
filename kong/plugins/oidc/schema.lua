@@ -26,8 +26,13 @@ return {
     redirect_after_logout_uri = { type = "string", required = false, default = '/' },
     auth_bootstrap_path = { type = "string" , required = false},
     refresh_session_interval = { type = "number" , required = false},
+    
     bypass_header = { type = "string", required = false },
+    bypass_header_list = { type = "string", required = false },
+    
     bypass_cookie = { type = "string", required = false },
+    bypass_cookie_list = { type = "string", required = false },
+    
     filters = { type = "string" }
   }
 }
