@@ -15,14 +15,14 @@ function OidcHandler:access(config)
   OidcHandler.super.access(self)
   
   if ngx.var.ssl_session_id ~= nil then
-    ngx.log("session id:" .. ngx.var.ssl_session_id)
+    ngx.log(ngx.DEBUG, "session id:" .. ngx.var.ssl_session_id)
   end
   if ngx.var.remote_addr ~= nil then
-    ngx.log("addr:" .. ngx.var.remote_addr)
+    ngx.log(ngx.DEBUG, "addr:" .. ngx.var.remote_addr)
   end
 
-  ngx.log("scheme:" .. ngx.var.scheme)
-  ngx.log("user-agent:" .. ngx.var.http_user_agent)
+  ngx.log(ngx.DEBUG, "scheme:" .. ngx.var.scheme)
+  ngx.log(ngx.DEBUG, "user-agent:" .. ngx.var.http_user_agent)
   
   local oidcConfig = utils.get_options(config, ngx)
   local cookie = ngx.req.get_headers()['Cookie'];
