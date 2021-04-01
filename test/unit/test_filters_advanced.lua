@@ -169,4 +169,72 @@ function TestFilter:testBypassBothConfiguredBothProvided()
   lu.assertFalse(filter.shouldProcessRequest(config) )
 end
 
+function TestFilter:testBypassCookieListWhenSingleCookieProvided()
+  config.bypass_cookie_list = {"Auth-Token","Other-Token"}
+  ngx.req.get_headers = function () 
+      return { Cookie = "Auth-Token=blue"} 
+  end
+  lu.assertFalse(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testBypassCookieListWhenBothCookiesProvided()
+  config.bypass_cookie_list = {"Auth-Token","Other-Token"}
+  ngx.req.get_headers = function () 
+      return { Cookie = "Other-Token=xyz;Auth-Token=blue;"} 
+  end
+  lu.assertFalse(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testNoBypassWithCookieList()
+  config.bypass_cookie_list = {"Auth-Token","Other-Token"}
+  ngx.req.get_headers = function () 
+      return { Cookie = "Zambas=true;"} 
+  end
+  lu.assertTrue(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testBypassHeaderListWhenSingleHeaderProvided()
+  config.bypass_header_list = {"zambas","XAuthorization"}
+  ngx.req.get_headers = function () 
+      return { XAuthorization = 'blue'} 
+  end
+  lu.assertFalse(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testBypassHeaderListWhenBothHeadersProvided()
+  config.bypass_header_list = {"zambas","XAuthorization"}
+  ngx.req.get_headers = function () 
+      return { XAuthorization = 'blue', zambas = "xpto"} 
+  end
+  lu.assertFalse(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testNoBypassWithHeaderList()
+  config.bypass_header_list = {"xyz","xpto"}
+  ngx.req.get_headers = function () 
+      return { XAuthorization = 'blue'} 
+  end
+  lu.assertTrue(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testBypassHeaderListWithNoCookieMatch()
+  config.bypass_header_list = {"xyz","xpto"}
+  config.bypass_cookie_list = {"Auth-Token","Other-Token"}
+  
+  ngx.req.get_headers = function () 
+      return { xyz = 'blue', Cookie:"zambas=true"} 
+  end
+  lu.assertFalse(filter.shouldProcessRequest(config) )
+end
+
+function TestFilter:testBypassCookieListWithNoHeaderMatch()
+  config.bypass_header_list = {"xyz","xpto"}
+  config.bypass_cookie_list = {"Auth-Token","Other-Token"}
+  
+  ngx.req.get_headers = function () 
+      return { zambas = 'blue', Cookie:"Auth-Token=123456"} 
+  end
+  lu.assertFalse(filter.shouldProcessRequest(config) )
+end
+
 lu.run()
