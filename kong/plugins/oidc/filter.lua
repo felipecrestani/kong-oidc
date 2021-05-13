@@ -33,7 +33,7 @@ local function hasCookieOnList(cookie_list)
         for _, cookie in ipairs(cookie_list) do
           local found = string.find(cookies, cookie .. "=",1,true)
           if(found) then
-            return 
+            return found
           end
         end
       end
@@ -46,7 +46,7 @@ local function hasHeaderOnList(header_list)
         for _, header in ipairs(header_list) do
           local found = ngx.req.get_headers()[header] and ngx.req.get_headers()[header] ~= ''
           if(found) then
-            return 
+            return found
           end
         end
   end
