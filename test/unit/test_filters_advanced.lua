@@ -13,17 +13,19 @@ function TestFilter:setUp()
       get_headers = function() return {} end
     }
   }
+  setupConfig()
 end
 
 function TestFilter:tearDown()
   TestFilter.super:tearDown()
 end
 
-
-local config =  {
-  filters = {  "^/auth$","^/auth[^%w_%-%.~]","^/arc$","^/arc[^%w_%-%.~]","^/projects/%d+/zeppelin[^%w_%-%.~]","^/projects/%d+/zeppelin$"}
-}
-
+function setupConfig()
+  config =  {
+    filters = {  "^/auth$","^/auth[^%w_%-%.~]","^/arc$","^/arc[^%w_%-%.~]","^/projects/%d+/zeppelin[^%w_%-%.~]","^/projects/%d+/zeppelin$"}
+  }
+end
+ 
 function TestFilter:testIgnoreRequestWhenUriIsAuth()
   ngx.var.uri = "/auth"
   lu.assertFalse(filter.shouldProcessRequest(config))
@@ -135,15 +137,17 @@ function TestFilter:testBypassWhenCookie()
 end
 
 function TestFilter:testBypassWhenHeader()
-  config.bypass_header = "XAuthorization"
+  config.bypass_header = "X-Authorization"
   ngx.req.get_headers = function () 
-     return { XAuthorization = 'blue'} 
+    local headers = {}
+    headers['X-Authorization'] = 'fakeToken'
+    return headers  
   end
   lu.assertFalse(filter.shouldProcessRequest(config) )
 end
 
 function TestFilter:testBypassBothConfiguredCookieProvided()
-  config.bypass_header = "XAuthorization"
+  config.bypass_header = "X-Authorization"
   config.bypass_cookie = "Auth-Token"
   ngx.req.get_headers = function () 
       return { Cookie = 'Auth-Token=bla;'} 
@@ -152,19 +156,24 @@ function TestFilter:testBypassBothConfiguredCookieProvided()
 end
 
 function TestFilter:testBypassBothConfiguredHeaderProvided()
-  config.bypass_header = "XAuthorization"
+  config.bypass_header = "X-Authorization"
   config.bypass_cookie = "Auth-Token"
   ngx.req.get_headers = function () 
-      return { XAuthorization = 'blue'} 
+    local headers = {}
+    headers['X-Authorization'] = 'fakeToken'
+    return headers  
   end
   lu.assertFalse(filter.shouldProcessRequest(config) )
 end
 
 function TestFilter:testBypassBothConfiguredBothProvided()
-  config.bypass_header = "XAuthorization"
+  config.bypass_header = "X-Authorization"
   config.bypass_cookie = "Auth-Token"
   ngx.req.get_headers = function () 
-      return { XAuthorization = 'blue', Cookie = "Auth-Token=blue"} 
+    local headers = {}
+    headers['X-Authorization'] = 'fakeToken'
+    headers['Cookie'] = 'Auth-Token=blue'
+    return headers  
   end
   lu.assertFalse(filter.shouldProcessRequest(config) )
 end
@@ -204,7 +213,7 @@ function TestFilter:testBypassHeaderListWhenSingleHeaderProvided()
 end
 
 function TestFilter:testBypassHeaderListWhenBothHeadersProvided()
-  config.bypass_header_list = {"zambas","XAuthorization"}
+  config.bypass_header_list = {"zambas","X-Authorization"}
   ngx.req.get_headers = function () 
     local headers = {}
     headers['X-Authorization'] = 'fakeToken'
