@@ -25,6 +25,7 @@ return {
     logout_path = { type = "string", required = false, default = '/logout' },
     redirect_after_logout_uri = { type = "string", required = false, default = '/' },
     auth_bootstrap_path = { type = "string" , required = false},
+    auth_bootstrap_flow = { type = "string", required = false, default = "no" },
     refresh_session_interval = { type = "number" , required = false},
     
     bypass_header = { type = "string", required = false },

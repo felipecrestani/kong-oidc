@@ -62,6 +62,7 @@ function M.get_options(config, ngx)
     recovery_page_path = config.recovery_page_path,
     filters = parseFilters(config.filters),
     auth_bootstrap_path = config.auth_bootstrap_path,
+    auth_bootstrap_flow = config.auth_bootstrap_flow,
     logout_path = config.logout_path,
     bypass_header = config.bypass_header,
     bypass_cookie = config.bypass_cookie,
