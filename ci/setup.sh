@@ -14,4 +14,5 @@ luarocks install lua-resty-openidc ${LUA_RESTY_OPENIDC_VERSION}
 luarocks install lua-cjson
 luarocks install luaunit
 luarocks install luacov
-
+luarocks install lua-ffi-zlib
+luarocks install penlight
